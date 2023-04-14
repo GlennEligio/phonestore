@@ -19,7 +19,10 @@ public class PhoneController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Phone>> getAllPhones() {
+    public ResponseEntity<List<Phone>> getAllPhones(@RequestParam(name = "brand", required = false) String brandName) {
+        if(brandName != null && !brandName.isBlank()) {
+            return ResponseEntity.ok(service.getPhoneByBrandName(brandName));
+        }
         return ResponseEntity.ok(service.getAllPhones());
     }
 

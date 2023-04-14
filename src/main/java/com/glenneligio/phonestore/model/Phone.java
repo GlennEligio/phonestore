@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Phone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "phone_id")
     private Long id;
     @Column(name = "price")
     private Double price;
@@ -36,6 +36,6 @@ public class Phone {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = Brand.class)
-    @JoinColumn(name = "brand_id")
+    @JoinColumn(name = "brand_name", referencedColumnName = "brand_name")
     private Brand brand;
 }
