@@ -1,6 +1,6 @@
 package com.glenneligio.phonestore.repository;
 
-import com.glenneligio.phonestore.model.Phone;
+import com.glenneligio.phonestore.entity.Phone;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.glenneligio.phonestore.controllers;
 
-import com.glenneligio.phonestore.model.Brand;
-import com.glenneligio.phonestore.model.Phone;
+import com.glenneligio.phonestore.entity.Brand;
 import com.glenneligio.phonestore.service.BrandService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -15,6 +15,7 @@ public class BrandController {
 
     private BrandService brandService;
 
+    @Autowired
     public BrandController(BrandService brandService) {
         this.brandService = brandService;
     }

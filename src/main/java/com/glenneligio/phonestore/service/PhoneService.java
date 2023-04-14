@@ -1,10 +1,11 @@
 package com.glenneligio.phonestore.service;
 
 import com.glenneligio.phonestore.exception.ApiException;
-import com.glenneligio.phonestore.model.Brand;
-import com.glenneligio.phonestore.model.Phone;
+import com.glenneligio.phonestore.entity.Brand;
+import com.glenneligio.phonestore.entity.Phone;
 import com.glenneligio.phonestore.repository.PhoneRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ public class PhoneService {
     private PhoneRepository phoneRepository;
     private BrandService brandService;
 
+    @Autowired
     public PhoneService(PhoneRepository phoneRepository, BrandService brandService) {
         this.phoneRepository = phoneRepository;
         this.brandService = brandService;
@@ -40,7 +42,7 @@ public class PhoneService {
     }
 
     public Phone updatePhone(Long id, Phone phone) {
-        Phone phone1 = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exist", HttpStatus.NOT_FOUND));
+        Phone phone1 = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exists", HttpStatus.NOT_FOUND));
         Brand brand = brandService.getBrandByName(phone.getBrand().getName());
         phone.setBrand(brand);
         ModelMapper mapper = new ModelMapper();

@@ -1,6 +1,6 @@
 package com.glenneligio.phonestore.repository;
 
-import com.glenneligio.phonestore.model.Brand;
+import com.glenneligio.phonestore.entity.Brand;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,7 +1,8 @@
 package com.glenneligio.phonestore.controllers;
 
-import com.glenneligio.phonestore.model.Phone;
+import com.glenneligio.phonestore.entity.Phone;
 import com.glenneligio.phonestore.service.PhoneService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -14,6 +15,7 @@ public class PhoneController {
 
     private final PhoneService service;
 
+    @Autowired
     public PhoneController(PhoneService service) {
         this.service = service;
     }

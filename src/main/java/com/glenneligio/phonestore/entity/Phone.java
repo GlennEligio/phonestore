@@ -1,4 +1,4 @@
-package com.glenneligio.phonestore.model;
+package com.glenneligio.phonestore.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,14 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
 
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "phones")
 public class Phone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
