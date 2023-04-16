@@ -1,8 +1,8 @@
 package com.glenneligio.phonestore.service;
 
 import com.glenneligio.phonestore.exception.ApiException;
-import com.glenneligio.phonestore.entity.Brand;
-import com.glenneligio.phonestore.entity.Phone;
+import com.glenneligio.phonestore.entity.BrandEntity;
+import com.glenneligio.phonestore.entity.PhoneEntity;
 import com.glenneligio.phonestore.repository.PhoneRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,37 +23,37 @@ public class PhoneService {
         this.brandService = brandService;
     }
 
-    public List<Phone> getAllPhones() {
+    public List<PhoneEntity> getAllPhones() {
         return phoneRepository.findAll();
     }
 
-    public Phone getPhoneById(Long id) {
+    public PhoneEntity getPhoneById(Long id) {
         return phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exist", HttpStatus.NOT_FOUND));
     }
 
-    public List<Phone> getPhoneByBrandName(String name) {
+    public List<PhoneEntity> getPhoneByBrandName(String name) {
         return phoneRepository.findByBrandName(name);
     }
 
-    public Phone createPhone(Phone phone) {
-        Brand brand = brandService.getBrandByName(phone.getBrand().getName());
-        phone.setBrand(brand);
-        return phoneRepository.save(phone);
+    public PhoneEntity createPhone(PhoneEntity phoneEntity) {
+        BrandEntity brandEntity = brandService.getBrandByName(phoneEntity.getBrand().getName());
+        phoneEntity.setBrand(brandEntity);
+        return phoneRepository.save(phoneEntity);
     }
 
-    public Phone updatePhone(Long id, Phone phone) {
-        Phone phone1 = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exists", HttpStatus.NOT_FOUND));
-        Brand brand = brandService.getBrandByName(phone.getBrand().getName());
-        phone.setBrand(brand);
+    public PhoneEntity updatePhone(Long id, PhoneEntity phoneEntity) {
+        PhoneEntity phoneEntity1 = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exists", HttpStatus.NOT_FOUND));
+        BrandEntity brandEntity = brandService.getBrandByName(phoneEntity.getBrand().getName());
+        phoneEntity.setBrand(brandEntity);
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);
-        mapper.map(phone, phone1);
-        return phoneRepository.save(phone1);
+        mapper.map(phoneEntity, phoneEntity1);
+        return phoneRepository.save(phoneEntity1);
     }
 
     public void deletePhone(Long id) {
-        Phone phone = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exist", HttpStatus.NOT_FOUND));
-        phoneRepository.delete(phone);
+        PhoneEntity phoneEntity = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exist", HttpStatus.NOT_FOUND));
+        phoneRepository.delete(phoneEntity);
     }
 
 }

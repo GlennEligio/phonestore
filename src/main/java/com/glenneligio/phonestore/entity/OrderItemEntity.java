@@ -8,27 +8,31 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "brands")
-public class Brand {
+@Entity(name = "order_items")
+public class OrderItemEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "brand_id")
+    @Column(name = "order_item_id")
     private Long id;
-    @Column(name = "brand_name", unique = true)
-    private String name;
+    @ManyToOne(targetEntity = PhoneEntity.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "phone_id")
+    private PhoneEntity phone;
+    @Column(name = "order_item_quantity")
+    private Long quantity;
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "brand", targetEntity = Phone.class)
-    @JsonIgnore
-    private List<Phone> phoneList;
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = OrderEntity.class, optional = false)
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
 }

@@ -1,6 +1,6 @@
 package com.glenneligio.phonestore.controllers;
 
-import com.glenneligio.phonestore.entity.Brand;
+import com.glenneligio.phonestore.entity.BrandEntity;
 import com.glenneligio.phonestore.service.BrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,28 +21,28 @@ public class BrandController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Brand>> getAllBrands() {
+    public ResponseEntity<List<BrandEntity>> getAllBrands() {
         return ResponseEntity.ok(brandService.getAllBrands());
     }
 
     @GetMapping("/{name}")
-    public ResponseEntity<Brand> getBrandByName(@PathVariable("name") String brandName) {
+    public ResponseEntity<BrandEntity> getBrandByName(@PathVariable("name") String brandName) {
         return ResponseEntity.ok(brandService.getBrandByName(brandName));
     }
 
     @PostMapping
-    public ResponseEntity<Brand> createBrand(@RequestBody Brand brand) {
-         Brand brand1 = brandService.createBrand(brand);
+    public ResponseEntity<BrandEntity> createBrand(@RequestBody BrandEntity brandEntity) {
+         BrandEntity brandEntity1 = brandService.createBrand(brandEntity);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(brand1.getId())
-                .toUri()).body(brand1);
+                .buildAndExpand(brandEntity1.getId())
+                .toUri()).body(brandEntity1);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Brand> updateBrand(@PathVariable("id") Long id,
-                                             @RequestBody Brand brand) {
-        return ResponseEntity.ok(brandService.updateBrandById(id, brand));
+    public ResponseEntity<BrandEntity> updateBrand(@PathVariable("id") Long id,
+                                                   @RequestBody BrandEntity brandEntity) {
+        return ResponseEntity.ok(brandService.updateBrandById(id, brandEntity));
     }
 
     @DeleteMapping("/{id}")

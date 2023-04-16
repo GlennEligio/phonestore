@@ -1,8 +1,8 @@
 package com.glenneligio.phonestore.service;
 
 import com.glenneligio.phonestore.exception.ApiException;
-import com.glenneligio.phonestore.entity.Brand;
-import com.glenneligio.phonestore.entity.Phone;
+import com.glenneligio.phonestore.entity.BrandEntity;
+import com.glenneligio.phonestore.entity.PhoneEntity;
 import com.glenneligio.phonestore.repository.BrandRepository;
 import com.glenneligio.phonestore.util.PhoneStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,42 +25,42 @@ public class BrandService {
         this.phoneStoreUtils = phoneStoreUtils;
     }
 
-    public List<Brand> getAllBrands() {
+    public List<BrandEntity> getAllBrands() {
         return brandRepository.findAll();
     }
 
-    public Brand getBrandById(Long brandId) {
+    public BrandEntity getBrandById(Long brandId) {
         return brandRepository.findById(brandId).orElseThrow(() -> new ApiException("Brand with specified id was not founds", HttpStatus.NOT_FOUND));
     }
 
-    public Brand getBrandByName(String name) {
+    public BrandEntity getBrandByName(String name) {
         return brandRepository.findByName(name).orElseThrow(() -> new ApiException("Brand with specified name was not found", HttpStatus.NOT_FOUND));
     }
 
-    public Brand createBrand(Brand brand) {
-        Optional<Brand> brandOptional = brandRepository.findByName(brand.getName());
+    public BrandEntity createBrand(BrandEntity brandEntity) {
+        Optional<BrandEntity> brandOptional = brandRepository.findByName(brandEntity.getName());
         if(brandOptional.isPresent()) throw new ApiException("Brand with same name already exist", HttpStatus.BAD_REQUEST);
-        brand.setPhoneList(new ArrayList<>());
-        return brandRepository.save(brand);
+        brandEntity.setPhoneList(new ArrayList<>());
+        return brandRepository.save(brandEntity);
     }
 
-    public Brand updateBrandById(Long brandId, Brand brand) {
-        Brand brand1 = brandRepository.findById(brandId)
+    public BrandEntity updateBrandById(Long brandId, BrandEntity brandEntity) {
+        BrandEntity brandEntity1 = brandRepository.findById(brandId)
                 .orElseThrow(() -> new ApiException("Brand with specified id was not found", HttpStatus.NOT_FOUND));
-        Optional<Brand> brandOptional = brandRepository.findByName(brand.getName());
+        Optional<BrandEntity> brandOptional = brandRepository.findByName(brandEntity.getName());
         if(brandOptional.isPresent()) throw new ApiException("Brand with same name already exist", HttpStatus.BAD_REQUEST);
-        phoneStoreUtils.update(brand, brand1);
-        return brandRepository.save(brand1);
+        phoneStoreUtils.update(brandEntity, brandEntity1);
+        return brandRepository.save(brandEntity1);
     }
 
     public void deleteBrandById(Long brandId) {
-        Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new ApiException("Brand with specified id was not found", HttpStatus.NOT_FOUND));
-        brandRepository.delete(brand);
+        BrandEntity brandEntity = brandRepository.findById(brandId).orElseThrow(() -> new ApiException("Brand with specified id was not found", HttpStatus.NOT_FOUND));
+        brandRepository.delete(brandEntity);
     }
 
-    public List<Phone> getBrandPhones(String brandName) {
-        Brand brand = brandRepository.findByName(brandName)
+    public List<PhoneEntity> getBrandPhones(String brandName) {
+        BrandEntity brandEntity = brandRepository.findByName(brandName)
                 .orElseThrow(() -> new ApiException("Brand with specified brand name does not exist", HttpStatus.NOT_FOUND));
-        return brand.getPhoneList();
+        return brandEntity.getPhoneList();
     }
 }

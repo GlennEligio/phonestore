@@ -1,6 +1,6 @@
 package com.glenneligio.phonestore.controllers;
 
-import com.glenneligio.phonestore.entity.Phone;
+import com.glenneligio.phonestore.entity.PhoneEntity;
 import com.glenneligio.phonestore.service.PhoneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class PhoneController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Phone>> getAllPhones(@RequestParam(name = "brand", required = false) String brandName) {
+    public ResponseEntity<List<PhoneEntity>> getAllPhones(@RequestParam(name = "brand", required = false) String brandName) {
         if(brandName != null && !brandName.isBlank()) {
             return ResponseEntity.ok(service.getPhoneByBrandName(brandName));
         }
@@ -29,23 +29,23 @@ public class PhoneController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Phone> getPhoneById(@PathVariable("id") Long id) {
+    public ResponseEntity<PhoneEntity> getPhoneById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.getPhoneById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Phone> createPhone(@RequestBody Phone phone) {
-        Phone phoneCreated = service.createPhone(phone);
+    public ResponseEntity<PhoneEntity> createPhone(@RequestBody PhoneEntity phoneEntity) {
+        PhoneEntity phoneEntityCreated = service.createPhone(phoneEntity);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{username}")
-                .buildAndExpand(phoneCreated.getId())
-                .toUri()).body(phoneCreated);
+                .buildAndExpand(phoneEntityCreated.getId())
+                .toUri()).body(phoneEntityCreated);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Phone> updatePhone(@RequestBody Phone phone,
-                                             @PathVariable("id") Long id) {
-        return ResponseEntity.ok(service.updatePhone(id, phone));
+    public ResponseEntity<PhoneEntity> updatePhone(@RequestBody PhoneEntity phoneEntity,
+                                                   @PathVariable("id") Long id) {
+        return ResponseEntity.ok(service.updatePhone(id, phoneEntity));
     }
 
     @DeleteMapping("/{id}")

@@ -1,4 +1,4 @@
-package com.glenneligio.phonestore.dto;
+package com.glenneligio.phonestore.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

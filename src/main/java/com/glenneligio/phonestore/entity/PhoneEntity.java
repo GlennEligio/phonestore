@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "phones")
-public class Phone {
+public class PhoneEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "phone_id")
@@ -34,7 +34,7 @@ public class Phone {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Brand.class)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = BrandEntity.class)
     @JoinColumn(name = "brand_name", referencedColumnName = "brand_name")
-    private Brand brand;
+    private BrandEntity brand;
 }

@@ -1,6 +1,6 @@
-package com.glenneligio.phonestore.handler;
+package com.glenneligio.phonestore.handlers;
 
-import com.glenneligio.phonestore.dto.ExceptionResponse;
+import com.glenneligio.phonestore.dtos.ExceptionResponse;
 import com.glenneligio.phonestore.exception.ApiException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
