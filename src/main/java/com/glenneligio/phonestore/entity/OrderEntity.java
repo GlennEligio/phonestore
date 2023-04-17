@@ -35,4 +35,7 @@ public class OrderEntity {
             cascade = CascadeType.ALL,
             mappedBy = "order")
     private List<OrderItemEntity> orderItems;
+    @ManyToOne(targetEntity = UserEntity.class, optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    private UserEntity user;
 }

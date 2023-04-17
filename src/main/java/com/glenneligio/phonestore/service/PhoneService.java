@@ -16,11 +16,13 @@ public class PhoneService {
 
     private PhoneRepository phoneRepository;
     private BrandService brandService;
+    private ModelMapper mapper;
 
     @Autowired
-    public PhoneService(PhoneRepository phoneRepository, BrandService brandService) {
+    public PhoneService(PhoneRepository phoneRepository, BrandService brandService, ModelMapper mapper) {
         this.phoneRepository = phoneRepository;
         this.brandService = brandService;
+        this.mapper = mapper;
     }
 
     public List<PhoneEntity> getAllPhones() {
@@ -45,8 +47,6 @@ public class PhoneService {
         PhoneEntity phoneEntity1 = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exists", HttpStatus.NOT_FOUND));
         BrandEntity brandEntity = brandService.getBrandByName(phoneEntity.getBrand().getName());
         phoneEntity.setBrand(brandEntity);
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(phoneEntity, phoneEntity1);
         return phoneRepository.save(phoneEntity1);
     }

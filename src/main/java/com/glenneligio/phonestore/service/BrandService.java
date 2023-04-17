@@ -4,7 +4,7 @@ import com.glenneligio.phonestore.exception.ApiException;
 import com.glenneligio.phonestore.entity.BrandEntity;
 import com.glenneligio.phonestore.entity.PhoneEntity;
 import com.glenneligio.phonestore.repository.BrandRepository;
-import com.glenneligio.phonestore.util.PhoneStoreUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,12 +17,12 @@ import java.util.Optional;
 public class BrandService {
 
     private BrandRepository brandRepository;
-    private PhoneStoreUtils phoneStoreUtils;
+    private ModelMapper mapper;
 
     @Autowired
-    public BrandService(BrandRepository brandRepository, PhoneStoreUtils phoneStoreUtils) {
+    public BrandService(BrandRepository brandRepository, ModelMapper mapper) {
         this.brandRepository = brandRepository;
-        this.phoneStoreUtils = phoneStoreUtils;
+        this.mapper = mapper;
     }
 
     public List<BrandEntity> getAllBrands() {
@@ -49,7 +49,7 @@ public class BrandService {
                 .orElseThrow(() -> new ApiException("Brand with specified id was not found", HttpStatus.NOT_FOUND));
         Optional<BrandEntity> brandOptional = brandRepository.findByName(brandEntity.getName());
         if(brandOptional.isPresent()) throw new ApiException("Brand with same name already exist", HttpStatus.BAD_REQUEST);
-        phoneStoreUtils.update(brandEntity, brandEntity1);
+        mapper.map(brandEntity, brandEntity1);
         return brandRepository.save(brandEntity1);
     }
 
