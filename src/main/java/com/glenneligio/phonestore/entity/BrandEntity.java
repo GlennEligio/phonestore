@@ -29,6 +29,5 @@ public class BrandEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "brand", targetEntity = PhoneEntity.class)
-    @JsonIgnore
     private List<PhoneEntity> phoneList;
 }

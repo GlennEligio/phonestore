@@ -1,5 +1,6 @@
 package com.glenneligio.phonestore.controllers;
 
+import com.glenneligio.phonestore.dtos.PhoneDto;
 import com.glenneligio.phonestore.entity.PhoneEntity;
 import com.glenneligio.phonestore.service.PhoneService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,31 +22,36 @@ public class PhoneController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PhoneEntity>> getAllPhones(@RequestParam(name = "brand", required = false) String brandName) {
+    public ResponseEntity<List<PhoneDto>> getAllPhones(@RequestParam(name = "brand", required = false) String brandName) {
+        List<PhoneDto> phoneDtos = null;
         if(brandName != null && !brandName.isBlank()) {
-            return ResponseEntity.ok(service.getPhoneByBrandName(brandName));
+            phoneDtos = service.getPhoneByBrandName(brandName).stream().map(PhoneDto::convertToDto).toList();
+            return ResponseEntity.ok(phoneDtos);
         }
-        return ResponseEntity.ok(service.getAllPhones());
+        phoneDtos = service.getAllPhones().stream().map(PhoneDto::convertToDto).toList();
+        return ResponseEntity.ok(phoneDtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PhoneEntity> getPhoneById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(service.getPhoneById(id));
+    public ResponseEntity<PhoneDto> getPhoneById(@PathVariable("id") Long id) {
+        PhoneEntity entity = service.getPhoneById(id);
+        return ResponseEntity.ok(PhoneDto.convertToDto(entity));
     }
 
     @PostMapping
-    public ResponseEntity<PhoneEntity> createPhone(@RequestBody PhoneEntity phoneEntity) {
+    public ResponseEntity<PhoneDto> createPhone(@RequestBody PhoneEntity phoneEntity) {
         PhoneEntity phoneEntityCreated = service.createPhone(phoneEntity);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{username}")
                 .buildAndExpand(phoneEntityCreated.getId())
-                .toUri()).body(phoneEntityCreated);
+                .toUri()).body(PhoneDto.convertToDto(phoneEntityCreated));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PhoneEntity> updatePhone(@RequestBody PhoneEntity phoneEntity,
+    public ResponseEntity<PhoneDto> updatePhone(@RequestBody PhoneEntity phoneEntity,
                                                    @PathVariable("id") Long id) {
-        return ResponseEntity.ok(service.updatePhone(id, phoneEntity));
+        PhoneEntity entity = service.updatePhone(id, phoneEntity);
+        return ResponseEntity.ok(PhoneDto.convertToDto(entity));
     }
 
     @DeleteMapping("/{id}")
