@@ -20,7 +20,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JwtUtil {
 
     // Fetch JWT in Config props
-    @Value("${dntx.secret-key}")
+    @Value("${phone-store.secret-key}")
     private String SECRET_KEY;
 
     // GENERATE JWT TOKENS

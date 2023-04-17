@@ -39,6 +39,6 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type")
     private UserType userType;
-    @OneToMany(targetEntity = OrderEntity.class, mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = OrderEntity.class, mappedBy = "user")
     private List<OrderEntity> orderList;
 }

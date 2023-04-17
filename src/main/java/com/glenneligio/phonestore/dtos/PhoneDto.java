@@ -2,12 +2,9 @@ package com.glenneligio.phonestore.dtos;
 
 import com.glenneligio.phonestore.entity.BrandEntity;
 import com.glenneligio.phonestore.entity.PhoneEntity;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;

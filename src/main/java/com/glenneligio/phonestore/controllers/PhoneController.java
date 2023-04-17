@@ -42,7 +42,7 @@ public class PhoneController {
     public ResponseEntity<PhoneDto> createPhone(@RequestBody PhoneEntity phoneEntity) {
         PhoneEntity phoneEntityCreated = service.createPhone(phoneEntity);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{username}")
+                .path("/{id}")
                 .buildAndExpand(phoneEntityCreated.getId())
                 .toUri()).body(PhoneDto.convertToDto(phoneEntityCreated));
     }

@@ -2,6 +2,7 @@ package com.glenneligio.phonestore.service;
 
 import com.glenneligio.phonestore.entity.OrderEntity;
 import com.glenneligio.phonestore.entity.PhoneEntity;
+import com.glenneligio.phonestore.entity.UserEntity;
 import com.glenneligio.phonestore.enums.OrderStatus;
 import com.glenneligio.phonestore.exception.ApiException;
 import com.glenneligio.phonestore.repository.OrderRepository;
@@ -18,12 +19,14 @@ public class OrderService {
 
     private OrderRepository orderRepository;
     private PhoneService phoneService;
+    private UserService userService;
     private ModelMapper mapper;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, PhoneService phoneService, ModelMapper mapper) {
+    public OrderService(OrderRepository orderRepository, PhoneService phoneService, UserService userService, ModelMapper mapper) {
         this.orderRepository = orderRepository;
         this.phoneService = phoneService;
+        this.userService = userService;
         this.mapper = mapper;
     }
 
@@ -38,6 +41,10 @@ public class OrderService {
 
     @Transactional
     public OrderEntity createOrder(OrderEntity orderEntity) {
+        // Check if the user attached exist
+        UserEntity userEntity = userService.getUserByUsername(orderEntity.getUser().getUsername());
+        orderEntity.setUser(userEntity);
+
         // check each there is enough stock for each Phone in OrderItem
         orderEntity.getOrderItems().forEach(orderItemEntity -> {
             PhoneEntity phone = phoneService.getPhoneById(orderItemEntity.getPhone().getId());
@@ -64,5 +71,9 @@ public class OrderService {
         OrderEntity order = orderRepository.findById(id)
                 .orElseThrow(() -> new ApiException("Order with id " + id + " was not found", HttpStatus.NOT_FOUND));
         orderRepository.delete(order);
+    }
+
+    public List<OrderEntity> getOrderByUserUsername(String username) {
+        return orderRepository.findByUserUsername(username);
     }
 }

@@ -10,6 +10,14 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
 
+# Custom Properties
+phone-store:
+  secret-key: ${JWT_SECRET_KEY:samplesecretkey}
+  admin:
+    username: ${PHONE_STORE_ADMIN_USERNAME:admin}
+    password: ${PHONE_STORE_ADMIN_PASSWORD:pass}
+    email: ${PHONE_STORE_ADMIN_EMAIL:admin@email.com}
+
 #logging:
 #  level:
 #    org:

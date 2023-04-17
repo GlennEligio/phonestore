@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class OrderItemDto {
 
     private Long id;
-    private PhoneEntity phone;
+    private PhoneDto phone;
     private Long quantity;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -31,6 +31,9 @@ public class OrderItemDto {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(dto, orderItemEntity);
+
+        PhoneEntity phoneEntity = PhoneDto.convertToEntity(dto.getPhone());
+        orderItemEntity.setPhone(phoneEntity);
         return orderItemEntity;
     }
 
@@ -39,6 +42,9 @@ public class OrderItemDto {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.map(entity, orderItemDto);
+
+        PhoneDto phoneDto = PhoneDto.convertToDto(entity.getPhone());
+        orderItemDto.setPhone(phoneDto);
         return orderItemDto;
     }
 }

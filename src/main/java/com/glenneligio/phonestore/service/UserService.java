@@ -21,9 +21,9 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
 
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private ModelMapper mapper;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ModelMapper mapper;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper mapper) {
@@ -49,12 +49,16 @@ public class UserService implements UserDetailsService {
     public UserEntity createUser(UserEntity userEntity) {
         Optional<UserEntity> userEntityOptional = userRepository.findByUsername(userEntity.getUsername());
         if(userEntityOptional.isPresent()) throw new ApiException("User with username " + userEntity.getUsername() + " already exist", HttpStatus.BAD_REQUEST);
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
+        userEntity.setIsActive(true);
         return userRepository.save(userEntity);
     }
 
     public UserEntity updateUser(String username, UserEntity userEntity) {
         UserEntity userEntity1 = getUserByUsername(username);
         mapper.map(userEntity, userEntity1);
+        userEntity1.setUsername(username);
+        userEntity1.setPassword(passwordEncoder.encode(userEntity1.getPassword()));
         return userRepository.save(userEntity1);
     }
 
@@ -83,6 +87,7 @@ public class UserService implements UserDetailsService {
         if(existingUserEntity.isPresent()) throw new ApiException("User with same username", HttpStatus.BAD_REQUEST);
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         userEntity.setUserType(UserType.CUSTOMER);
+        userEntity.setIsActive(true);
         return userRepository.save(userEntity);
     }
 }
