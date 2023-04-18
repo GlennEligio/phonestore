@@ -5,11 +5,9 @@ import com.glenneligio.phonestore.entity.UserEntity;
 import com.glenneligio.phonestore.service.OrderService;
 import com.glenneligio.phonestore.service.UserService;
 import com.glenneligio.phonestore.util.JwtUtil;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
