@@ -81,9 +81,12 @@ public class OrderItemService {
         return orderItemRepository.save(orderItemEntity);
     }
 
+    @Transactional
     public void deleteOrderItem(Long id) {
         OrderItemEntity orderItemEntity = orderItemRepository.findById(id)
                 .orElseThrow(() -> new ApiException("Order item with specified id does not exist", HttpStatus.NOT_FOUND));
+        OrderEntity orderEntity = orderService.getOrderById(orderItemEntity.getOrder().getId());
+        orderEntity.getOrderItems().removeIf(item -> item.getId().equals(id));
         orderItemRepository.delete(orderItemEntity);
     }
 

@@ -32,7 +32,7 @@ public class OrderItemEntity {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = OrderEntity.class, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = OrderEntity.class, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "order_id")
     private OrderEntity order;
 }

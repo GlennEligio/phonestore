@@ -1,7 +1,6 @@
 package com.glenneligio.phonestore.controllers;
 
 import com.glenneligio.phonestore.dtos.OrderItemDto;
-import com.glenneligio.phonestore.entity.OrderEntity;
 import com.glenneligio.phonestore.entity.OrderItemEntity;
 import com.glenneligio.phonestore.service.OrderItemService;
 import org.springframework.beans.factory.annotation.Autowired;

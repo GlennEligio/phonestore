@@ -3,6 +3,9 @@ package com.glenneligio.phonestore.dtos;
 import com.glenneligio.phonestore.entity.OrderEntity;
 import com.glenneligio.phonestore.entity.OrderItemEntity;
 import com.glenneligio.phonestore.enums.OrderStatus;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +21,10 @@ public class OrderDto {
     private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    @Pattern (regexp = "(COMPLETED|PENDING)", message = "Order status can only be PENDING or COMPLETED")
     private OrderStatus status;
+    @NotNull(message = "Order items must not be null")
+    @NotEmpty(message = "Order items must not be empty")
     private List<OrderItemDto> orderItemsDto;
 
     public static OrderDto convertToDto(OrderEntity entity) {

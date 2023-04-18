@@ -32,7 +32,8 @@ public class OrderEntity {
     private OrderStatus status;
     @OneToMany(fetch = FetchType.EAGER,
             targetEntity = OrderItemEntity.class,
-            cascade = CascadeType.ALL,
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true,
             mappedBy = "order")
     private List<OrderItemEntity> orderItems;
     @ManyToOne(targetEntity = UserEntity.class, optional = false)

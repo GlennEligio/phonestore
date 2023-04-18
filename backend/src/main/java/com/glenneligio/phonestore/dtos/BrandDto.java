@@ -1,6 +1,8 @@
 package com.glenneligio.phonestore.dtos;
 
 import com.glenneligio.phonestore.entity.BrandEntity;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BrandDto {
     private Long id;
+    @NotBlank(message = "Brand name can't be blank")
+    @Max(message = "Brand name can only have 64 characters", value = 64)
     private String name;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

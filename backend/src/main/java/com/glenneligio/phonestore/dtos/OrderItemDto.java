@@ -4,6 +4,9 @@ import com.glenneligio.phonestore.entity.OrderEntity;
 import com.glenneligio.phonestore.entity.OrderItemEntity;
 import com.glenneligio.phonestore.entity.PhoneEntity;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,9 +22,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemDto {
-
     private Long id;
+    @Valid
+    @NotNull(message = "Phone must present")
     private PhoneDto phone;
+    @Positive(message = "Quantity must be a positive number")
     private Long quantity;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

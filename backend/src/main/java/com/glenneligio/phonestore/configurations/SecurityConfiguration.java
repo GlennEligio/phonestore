@@ -1,5 +1,6 @@
 package com.glenneligio.phonestore.configurations;
 
+import com.glenneligio.phonestore.enums.UserType;
 import com.glenneligio.phonestore.filters.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,9 +42,16 @@ public class SecurityConfiguration {
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, "/api/*/users/@self/orders").hasAuthority("CUSTOMER")
+                // FOR ORDERS
+                .requestMatchers(HttpMethod.GET, "/api/*/orders/*/items", "/api/*/users/@self/orders").hasAuthority(UserType.CUSTOMER.getType())
+                .requestMatchers(HttpMethod.PUT, "/api/*/orders/*/items/*").hasAuthority(UserType.CUSTOMER.getType())
+                .requestMatchers(HttpMethod.POST, "/api/*/orders/*/items", "/api/*/orders").hasAuthority(UserType.CUSTOMER.getType())
+                .requestMatchers(HttpMethod.DELETE, "/api/*/orders/*/items/*", "/api/*/orders/*").hasAuthority(UserType.CUSTOMER.getType())
+                // FOR GETTING BRAND AND PRODUCT INFO
+                .requestMatchers(HttpMethod.GET, "/api/*/brands").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/*/phones").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/*/users/login", "/api/*/users/register").permitAll()
-                .anyRequest().hasAnyAuthority("ADMIN");
+                .anyRequest().hasAnyAuthority(UserType.ADMIN.getType());
 //                .anyRequest().permitAll();
         return http.build();
     }
