@@ -30,6 +30,8 @@ public class PhoneStoreResponseEntityExceptionHandler extends ResponseEntityExce
         ExceptionResponse response = new ExceptionResponse(List.of(ex.getMessage()),
                 LocalDateTime.now(),
                 request.getDescription(false));
+        log.error("General exception caught", ex);
+        log.debug("Service request: {}", request);
         ex.printStackTrace();
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -41,6 +43,8 @@ public class PhoneStoreResponseEntityExceptionHandler extends ResponseEntityExce
         ExceptionResponse response = new ExceptionResponse(List.of(ex.getMessage()),
                 LocalDateTime.now(),
                 request.getDescription(false));
+        log.error("Api Exception caught", ex);
+        log.error("Service request: {}", request);
         ex.printStackTrace();
         return new ResponseEntity<>(response, apiException.getCode());
     }
@@ -58,6 +62,8 @@ public class PhoneStoreResponseEntityExceptionHandler extends ResponseEntityExce
         ExceptionResponse response = new ExceptionResponse(errors,
                 LocalDateTime.now(),
                 request.getDescription(false));
+        log.error("Validation exception caught", ex);
+        log.debug("Request: {}", request);
         ex.printStackTrace();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -73,6 +79,9 @@ public class PhoneStoreResponseEntityExceptionHandler extends ResponseEntityExce
         error.setDetails(request.getDescription(false));
         error.setErrors(errors);
         error.setTimestamp(LocalDateTime.now());
+        log.error("ConstraintViolation caught", e);
+        log.debug("Service request: {}", request);
+        e.printStackTrace();
         return ResponseEntity.status(400).body(error);
     }
 }

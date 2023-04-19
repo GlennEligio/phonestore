@@ -21,7 +21,7 @@ public class JwtUtil {
 
     // Fetch JWT in Config props
     @Value("${phone-store.secret-key}")
-    private String SECRET_KEY;
+    private String secretKey;
 
     // GENERATE JWT TOKENS
     public String generateToken(UserDetails userDetails) {
@@ -40,7 +40,7 @@ public class JwtUtil {
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 3)))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+                .signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 
     private String createRefreshToken(Map<String, Object> claims, String username) {
@@ -49,7 +49,7 @@ public class JwtUtil {
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000L * 60 * 60 * 24)))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+                .signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 
     // VALIDATE JWT TOKEN
@@ -64,7 +64,7 @@ public class JwtUtil {
 
     // EXTRACTING CLAIM(S)
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

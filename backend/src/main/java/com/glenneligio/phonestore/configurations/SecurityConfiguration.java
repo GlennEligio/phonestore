@@ -50,6 +50,7 @@ public class SecurityConfiguration {
                 // FOR GETTING BRAND AND PRODUCT INFO
                 .requestMatchers(HttpMethod.GET, "/api/*/brands").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/*/phones").permitAll()
+                // LOGIN AND REGISTER
                 .requestMatchers(HttpMethod.POST, "/api/*/users/login", "/api/*/users/register").permitAll()
                 .anyRequest().hasAnyAuthority(UserType.ADMIN.getType());
 //                .anyRequest().permitAll();

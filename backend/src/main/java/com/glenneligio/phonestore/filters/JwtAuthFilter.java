@@ -35,7 +35,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String requestUri = request.getRequestURI();
         final String requestMethod = request.getMethod();
+
         log.info("{} {}", requestMethod, requestUri);
+
         Pattern patPackageDescription = Pattern.compile("/api/v.*/users/(login|register)");
         Matcher matPackageDescription = patPackageDescription.matcher(requestUri);
         if(matPackageDescription.find()) {

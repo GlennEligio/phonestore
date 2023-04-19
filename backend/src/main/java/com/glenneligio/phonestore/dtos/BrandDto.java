@@ -1,7 +1,6 @@
 package com.glenneligio.phonestore.dtos;
 
 import com.glenneligio.phonestore.entity.BrandEntity;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;

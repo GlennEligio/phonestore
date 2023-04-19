@@ -4,6 +4,7 @@ import com.glenneligio.phonestore.exception.ApiException;
 import com.glenneligio.phonestore.entity.BrandEntity;
 import com.glenneligio.phonestore.entity.PhoneEntity;
 import com.glenneligio.phonestore.repository.PhoneRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class PhoneService {
+    public static final String ENTERING_METHOD = "Entering method {}";
+    public static final String EXITING_METHOD = "Exiting method {}";
 
     private PhoneRepository phoneRepository;
     private BrandService brandService;
@@ -26,34 +30,57 @@ public class PhoneService {
     }
 
     public List<PhoneEntity> getAllPhones() {
-        return phoneRepository.findAll();
+        final String METHOD_NAME = "getAllPhones";
+        log.info(ENTERING_METHOD, METHOD_NAME);
+        List<PhoneEntity> phoneEntityList = phoneRepository.findAll();
+        log.info(EXITING_METHOD, METHOD_NAME);
+        return phoneEntityList;
     }
 
     public PhoneEntity getPhoneById(Long id) {
-        return phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exist", HttpStatus.NOT_FOUND));
+        final String METHOD_NAME = "getPhoneById";
+        log.info(ENTERING_METHOD, METHOD_NAME);
+        PhoneEntity phone = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exist", HttpStatus.NOT_FOUND));
+        log.info(EXITING_METHOD, METHOD_NAME);
+        return phone;
     }
 
     public List<PhoneEntity> getPhoneByBrandName(String name) {
-        return phoneRepository.findByBrandName(name);
+        final String METHOD_NAME = "getPhoneByBrandName";
+        log.info(ENTERING_METHOD, METHOD_NAME);
+        List<PhoneEntity> phoneEntityList = phoneRepository.findByBrandName(name);
+        log.info(EXITING_METHOD, METHOD_NAME);
+        return phoneEntityList;
     }
 
     public PhoneEntity createPhone(PhoneEntity phoneEntity) {
+        final String METHOD_NAME = "createPhone";
+        log.info(ENTERING_METHOD, METHOD_NAME);
         BrandEntity brandEntity = brandService.getBrandByName(phoneEntity.getBrand().getName());
         phoneEntity.setBrand(brandEntity);
-        return phoneRepository.save(phoneEntity);
+        PhoneEntity phoneCreated = phoneRepository.save(phoneEntity);
+        log.info(EXITING_METHOD, METHOD_NAME);
+        return phoneCreated;
     }
 
     public PhoneEntity updatePhone(Long id, PhoneEntity phoneEntity) {
+        final String METHOD_NAME = "updatePhone";
+        log.info(ENTERING_METHOD, METHOD_NAME);
         PhoneEntity phoneEntity1 = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exists", HttpStatus.NOT_FOUND));
         BrandEntity brandEntity = brandService.getBrandByName(phoneEntity.getBrand().getName());
         phoneEntity.setBrand(brandEntity);
         mapper.map(phoneEntity, phoneEntity1);
-        return phoneRepository.save(phoneEntity1);
+        PhoneEntity phoneUpdated = phoneRepository.save(phoneEntity1);
+        log.info(EXITING_METHOD, METHOD_NAME);
+        return phoneUpdated;
     }
 
     public void deletePhone(Long id) {
+        final String METHOD_NAME = "deletePhone";
+        log.info(ENTERING_METHOD, METHOD_NAME);
         PhoneEntity phoneEntity = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exist", HttpStatus.NOT_FOUND));
         phoneRepository.delete(phoneEntity);
+        log.info(EXITING_METHOD, METHOD_NAME);
     }
 
 }
