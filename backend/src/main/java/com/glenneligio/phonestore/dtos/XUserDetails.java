@@ -12,14 +12,12 @@ public class XUserDetails implements UserDetails {
 
     private final String username;
     private final String password;
-    private final String fullName;
     private final String[] types;
     private final Boolean isActive;
 
     public XUserDetails(UserEntity userEntity) {
         this.username = userEntity.getUsername();
         this.password = userEntity.getPassword();
-        this.fullName = userEntity.getFullName();
         this.types = new String[]{userEntity.getUserType().getType()};
         this.isActive = userEntity.getIsActive();
     }
@@ -59,7 +57,4 @@ public class XUserDetails implements UserDetails {
         return isActive;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
 }

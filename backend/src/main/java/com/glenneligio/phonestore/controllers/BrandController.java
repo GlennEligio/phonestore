@@ -3,6 +3,7 @@ package com.glenneligio.phonestore.controllers;
 import com.glenneligio.phonestore.dtos.BrandDto;
 import com.glenneligio.phonestore.entity.BrandEntity;
 import com.glenneligio.phonestore.service.BrandService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,19 +35,21 @@ public class BrandController {
     }
 
     @PostMapping
-    public ResponseEntity<BrandDto> createBrand(@RequestBody BrandEntity brandEntity) {
-         BrandEntity brandEntity1 = brandService.createBrand(brandEntity);
+    public ResponseEntity<BrandDto> createBrand(@RequestBody @Valid BrandDto dto) {
+        BrandEntity brandEntityInput = BrandDto.convertToEntity(dto);
+        BrandEntity brandEntityCreated = brandService.createBrand(brandEntityInput);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(brandEntity1.getId())
-                .toUri()).body(BrandDto.convertToDto(brandEntity1));
+                .buildAndExpand(brandEntityCreated.getId())
+                .toUri()).body(BrandDto.convertToDto(brandEntityCreated));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<BrandDto> updateBrand(@PathVariable("id") Long id,
-                                                   @RequestBody BrandEntity brandEntity) {
-        BrandEntity entity = brandService.updateBrandById(id, brandEntity);
-        return ResponseEntity.ok(BrandDto.convertToDto(entity));
+                                                @RequestBody @Valid BrandDto brandDto) {
+        BrandEntity brandEntityInput = BrandDto.convertToEntity(brandDto);
+        BrandEntity brandEntityUpdated = brandService.updateBrandById(id, brandEntityInput);
+        return ResponseEntity.ok(BrandDto.convertToDto(brandEntityUpdated));
     }
 
     @DeleteMapping("/{id}")

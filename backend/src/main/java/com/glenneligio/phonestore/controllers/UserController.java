@@ -5,6 +5,7 @@ import com.glenneligio.phonestore.entity.UserEntity;
 import com.glenneligio.phonestore.service.OrderService;
 import com.glenneligio.phonestore.service.UserService;
 import com.glenneligio.phonestore.util.JwtUtil;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -42,8 +43,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserEntity entity) {
-        UserEntity userCreated = userService.createUser(entity);
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid CreateUpdateUserDto userDto) {
+        UserEntity userEntityInput = CreateUpdateUserDto.convertToEntity(userDto);
+        UserEntity userCreated = userService.createUser(userEntityInput);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{username}")
                 .buildAndExpand(userCreated.getUsername())
@@ -52,8 +54,9 @@ public class UserController {
 
     @PutMapping("/{username}")
     public ResponseEntity<UserDto> updateUser(@PathVariable String username,
-                                              @RequestBody UserEntity entity) {
-        UserEntity userUpdated = userService.updateUser(username, entity);
+                                              @RequestBody @Valid CreateUpdateUserDto userDto) {
+        UserEntity userEntityInput = CreateUpdateUserDto.convertToEntity(userDto);
+        UserEntity userUpdated = userService.updateUser(username, userEntityInput);
         return ResponseEntity.ok(UserDto.convertToDto(userUpdated));
     }
 
@@ -64,14 +67,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto dto) {
         var user = userService.login(dto.getUsername(), dto.getPassword());
         LoginResponseDto loginResponseDto = getLoginResponseDto(user);
         return ResponseEntity.ok(loginResponseDto);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<LoginResponseDto> register(@RequestBody RegisterRequestDto dto) {
+    public ResponseEntity<LoginResponseDto> register(@RequestBody @Valid RegisterRequestDto dto) {
         UserEntity user = new UserEntity();
         user.setFullName(dto.getFullName());
         user.setUsername(dto.getUsername());

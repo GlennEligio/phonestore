@@ -1,13 +1,13 @@
 package com.glenneligio.phonestore.controllers;
 
-import com.glenneligio.phonestore.dtos.OrderDto;
-import com.glenneligio.phonestore.dtos.OrderItemDto;
-import com.glenneligio.phonestore.dtos.XUserDetails;
+import com.glenneligio.phonestore.dtos.*;
 import com.glenneligio.phonestore.entity.OrderEntity;
 import com.glenneligio.phonestore.entity.OrderItemEntity;
+import com.glenneligio.phonestore.entity.UserEntity;
 import com.glenneligio.phonestore.exception.ApiException;
 import com.glenneligio.phonestore.service.OrderItemService;
 import com.glenneligio.phonestore.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,19 +44,38 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderEntity order) {
-        OrderEntity orderCreated = orderService.createOrder(order);
+    public ResponseEntity<OrderDto> createOrder(@RequestBody @Valid CreateOrderDto orderDto,
+                                                Authentication authentication) {
+        OrderEntity orderEntityInput = CreateOrderDto.convertToEntity(orderDto);
+
+        String username = ((XUserDetails) authentication.getPrincipal()).getUsername();
+        UserEntity user = new UserEntity();
+        user.setUsername(username);
+        orderEntityInput.setUser(user);
+
+        OrderEntity orderCreated = orderService.createOrder(orderEntityInput);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(orderCreated.getId())
                 .toUri()).body(OrderDto.convertToDto(orderCreated));
     }
 
-    // SHOULD NOT BE EXPOSED, UPDATES IN ORDER IS DONE ONLY IN DELETE /orders/{id} or /orders/{orderId}/items ENDPOINTS
+    // SHOULD NOT BE EXPOSED, UPDATES IN ORDER IS DONE ONLY IN
+    // DELETE /orders/{id} and
+    // DELETE/UPDATE/POST /orders/{orderId}/items ENDPOINTS
     @PutMapping("/{id}")
-    public ResponseEntity<OrderDto> updateOrder (@PathVariable Long id, @RequestBody OrderEntity orderEntity) {
-        OrderEntity entity = orderService.updateOrder(id, orderEntity);
-        return ResponseEntity.ok(OrderDto.convertToDto(entity));
+    public ResponseEntity<OrderDto> updateOrder (@PathVariable Long id,
+                                                 @RequestBody @Valid UpdateOrderDto orderDto,
+                                                 Authentication authentication) {
+        OrderEntity orderEntityInput = UpdateOrderDto.convertToEntity(orderDto);
+
+        String username = ((XUserDetails) authentication.getPrincipal()).getUsername();
+        UserEntity user = new UserEntity();
+        user.setUsername(username);
+        orderEntityInput.setUser(user);
+
+        OrderEntity orderEntityUpdated = orderService.updateOrder(id, orderEntityInput);
+        return ResponseEntity.ok(OrderDto.convertToDto(orderEntityUpdated));
     }
 
     @DeleteMapping("/{id}")
@@ -80,7 +99,7 @@ public class OrderController {
 
     @PostMapping("/{orderId}/items")
     public ResponseEntity<OrderItemDto> addOrderItem(@PathVariable Long orderId,
-                                                     @RequestBody OrderItemDto orderItemDto,
+                                                     @RequestBody @Valid OrderItemDto orderItemDto,
                                                      Authentication authentication) {
         OrderEntity orderEntity = orderService.getOrderById(orderId);
         isOrderOwnedByUser(orderEntity, authentication);
@@ -98,7 +117,7 @@ public class OrderController {
     @PutMapping("/{orderId}/items/{orderItemId}")
     public ResponseEntity<OrderItemDto> updateOrderItem(@PathVariable Long orderId,
                                                         @PathVariable Long orderItemId,
-                                                        @RequestBody OrderItemDto orderItemDto,
+                                                        @RequestBody @Valid OrderItemDto orderItemDto,
                                                         Authentication authentication) {
         OrderEntity orderEntity = orderService.getOrderById(orderId);
         isOrderOwnedByUser(orderEntity, authentication);

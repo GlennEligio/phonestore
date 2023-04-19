@@ -18,10 +18,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDto {
-    private Long id;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+public class UpdateOrderDto {
     @NotBlank(message = "Order status must be present")
     @Pattern (regexp = "(COMPLETED|PENDING)", message = "Order status can only be PENDING or COMPLETED")
     private String status;
@@ -29,20 +26,7 @@ public class OrderDto {
     @NotEmpty(message = "Order items must not be empty")
     private List<OrderItemDto> orderItems;
 
-    public static OrderDto convertToDto(OrderEntity entity) {
-        OrderDto orderDto = new OrderDto();
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setSkipNullEnabled(true);
-        mapper.map(entity, orderDto);
-
-        List<OrderItemDto> orderItemDtos = entity.getOrderItems().stream().map(OrderItemDto::convertToDto).toList();
-        orderDto.setOrderItems(orderItemDtos);
-
-        orderDto.setStatus(entity.getStatus().getType());
-        return orderDto;
-    }
-
-    public static OrderEntity convertToEntity(OrderDto dto) {
+    public static OrderEntity convertToEntity(UpdateOrderDto dto) {
         OrderEntity orderEntity = new OrderEntity();
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);

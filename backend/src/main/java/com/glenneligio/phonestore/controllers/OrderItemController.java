@@ -1,8 +1,10 @@
 package com.glenneligio.phonestore.controllers;
 
+import com.glenneligio.phonestore.dtos.OrderDto;
 import com.glenneligio.phonestore.dtos.OrderItemDto;
 import com.glenneligio.phonestore.entity.OrderItemEntity;
 import com.glenneligio.phonestore.service.OrderItemService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +35,9 @@ public class OrderItemController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderItemDto> createOrderItem(@RequestBody OrderItemEntity orderItemEntity) {
-        OrderItemEntity orderItemCreated = orderItemService.createOrderItem(orderItemEntity);
+    public ResponseEntity<OrderItemDto> createOrderItem(@RequestBody @Valid OrderItemDto orderItemDto) {
+        OrderItemEntity orderItemEntityInput = OrderItemDto.convertToEntity(orderItemDto);
+        OrderItemEntity orderItemCreated = orderItemService.createOrderItem(orderItemEntityInput);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(orderItemCreated.getId())
@@ -42,9 +45,11 @@ public class OrderItemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OrderItemDto> updateOrderItem(@PathVariable Long id, @RequestBody OrderItemEntity orderItemEntity) {
-        OrderItemEntity entity = orderItemService.updateOrderItem(id, orderItemEntity);
-        return ResponseEntity.ok(OrderItemDto.convertToDto(entity));
+    public ResponseEntity<OrderItemDto> updateOrderItem(@PathVariable Long id,
+                                                        @RequestBody @Valid OrderItemDto orderItemDto) {
+        OrderItemEntity orderItemEntityInput = OrderItemDto.convertToEntity(orderItemDto);
+        OrderItemEntity orderItemEntityUpdated = orderItemService.updateOrderItem(id, orderItemEntityInput);
+        return ResponseEntity.ok(OrderItemDto.convertToDto(orderItemEntityUpdated));
     }
 
     @DeleteMapping("/{id}")

@@ -3,6 +3,7 @@ package com.glenneligio.phonestore.controllers;
 import com.glenneligio.phonestore.dtos.PhoneDto;
 import com.glenneligio.phonestore.entity.PhoneEntity;
 import com.glenneligio.phonestore.service.PhoneService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +40,9 @@ public class PhoneController {
     }
 
     @PostMapping
-    public ResponseEntity<PhoneDto> createPhone(@RequestBody PhoneEntity phoneEntity) {
-        PhoneEntity phoneEntityCreated = service.createPhone(phoneEntity);
+    public ResponseEntity<PhoneDto> createPhone(@RequestBody @Valid PhoneDto phoneDto) {
+        PhoneEntity phoneEntityInput = PhoneDto.convertToEntity(phoneDto);
+        PhoneEntity phoneEntityCreated = service.createPhone(phoneEntityInput);
         return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(phoneEntityCreated.getId())
@@ -48,9 +50,10 @@ public class PhoneController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PhoneDto> updatePhone(@RequestBody PhoneEntity phoneEntity,
-                                                   @PathVariable("id") Long id) {
-        PhoneEntity entity = service.updatePhone(id, phoneEntity);
+    public ResponseEntity<PhoneDto> updatePhone(@RequestBody @Valid PhoneDto phoneDto,
+                                                @PathVariable("id") Long id) {
+        PhoneEntity phoneEntityInput = PhoneDto.convertToEntity(phoneDto);
+        PhoneEntity entity = service.updatePhone(id, phoneEntityInput);
         return ResponseEntity.ok(PhoneDto.convertToDto(entity));
     }
 

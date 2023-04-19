@@ -2,6 +2,7 @@ package com.glenneligio.phonestore.entity;
 
 import com.glenneligio.phonestore.enums.OrderStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,14 +30,17 @@ public class OrderEntity {
     private LocalDateTime updatedAt;
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status")
+    @NotNull(message = "Order status must be present")
     private OrderStatus status;
     @OneToMany(fetch = FetchType.EAGER,
             targetEntity = OrderItemEntity.class,
             cascade = {CascadeType.ALL},
             orphanRemoval = true,
             mappedBy = "order")
+    @NotNull(message = "Order items must be present")
     private List<OrderItemEntity> orderItems;
     @ManyToOne(targetEntity = UserEntity.class, optional = false)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    @NotNull(message = "User must be present")
     private UserEntity user;
 }

@@ -2,6 +2,9 @@ package com.glenneligio.phonestore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,8 +26,10 @@ public class OrderItemEntity {
     private Long id;
     @ManyToOne(targetEntity = PhoneEntity.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "phone_id")
+    @NotNull(message = "Phone must be present")
     private PhoneEntity phone;
     @Column(name = "order_item_quantity")
+    @Positive(message = "Quantity must be positive")
     private Long quantity;
     @CreationTimestamp
     @Column(name = "created_at")
@@ -34,5 +39,6 @@ public class OrderItemEntity {
     private LocalDateTime updatedAt;
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = OrderEntity.class, optional = false, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "order_id")
+    @NotNull(message = "Order must be present/attached to the order item")
     private OrderEntity order;
 }

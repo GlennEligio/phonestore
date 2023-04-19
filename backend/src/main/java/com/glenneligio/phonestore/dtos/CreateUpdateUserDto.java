@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
@@ -17,10 +16,12 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+public class CreateUpdateUserDto {
     private Long id;
     @NotBlank(message = "Username can't be blank")
     private String username;
+    @NotBlank(message = "Password can't be blank")
+    private String password;
     @NotBlank(message = "Email can't be blank")
     @Email(message = "Email must be a valid one")
     private String email;
@@ -34,17 +35,7 @@ public class UserDto {
     @Pattern(regexp = "(CUSTOMER|ADMIN)", message = "User can only be of type CUSTOMER or ADMIN")
     private String userType;
 
-    public static UserDto convertToDto(UserEntity entity) {
-        UserDto dto = new UserDto();
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setSkipNullEnabled(true);
-        mapper.map(entity, dto);
-
-        dto.setUserType(entity.getUserType().getType());
-        return dto;
-    }
-
-    public static UserEntity convertToEntity(UserDto dto) {
+    public static UserEntity convertToEntity(CreateUpdateUserDto dto) {
         UserEntity entity = new UserEntity();
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setSkipNullEnabled(true);
@@ -54,3 +45,4 @@ public class UserDto {
         return entity;
     }
 }
+
