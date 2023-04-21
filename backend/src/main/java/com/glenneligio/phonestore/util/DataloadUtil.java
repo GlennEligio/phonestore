@@ -31,6 +31,7 @@ public class DataloadUtil implements ApplicationRunner {
         user.setPassword(adminPassword);
         user.setEmail(adminEmail);
         user.setIsActive(true);
+        user.setFullName("Administrator");
         user.setUserType(UserType.ADMIN);
         service.createUser(user);
     }
