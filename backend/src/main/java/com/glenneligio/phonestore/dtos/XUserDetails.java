@@ -1,6 +1,7 @@
 package com.glenneligio.phonestore.dtos;
 
 import com.glenneligio.phonestore.entity.UserEntity;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Arrays;
 import java.util.Collection;
 
+@Data
 public class XUserDetails implements UserDetails {
 
     private final String username;

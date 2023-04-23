@@ -1,5 +1,8 @@
 package com.glenneligio.phonestore.service;
 
+import com.glenneligio.phonestore.dtos.OrderDto;
+import com.glenneligio.phonestore.dtos.OrderItemDto;
+import com.glenneligio.phonestore.dtos.PhoneDto;
 import com.glenneligio.phonestore.entity.OrderEntity;
 import com.glenneligio.phonestore.entity.OrderItemEntity;
 import com.glenneligio.phonestore.entity.PhoneEntity;
@@ -25,14 +28,12 @@ public class OrderService {
     private OrderRepository orderRepository;
     private PhoneService phoneService;
     private UserService userService;
-    private ModelMapper mapper;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, PhoneService phoneService, UserService userService, ModelMapper mapper) {
+    public OrderService(OrderRepository orderRepository, PhoneService phoneService, UserService userService) {
         this.orderRepository = orderRepository;
         this.phoneService = phoneService;
         this.userService = userService;
-        this.mapper = mapper;
     }
 
     public List<OrderEntity> getAllOrders() {
@@ -61,7 +62,7 @@ public class OrderService {
         orderEntity.setUser(userEntity);
 
         // check each there is enough stock for each Phone in OrderItem
-        orderEntity.getOrderItems().forEach(orderItemEntity -> {
+        List<OrderItemEntity> orderItemEntityList = orderEntity.getOrderItems().stream().map(orderItemEntity -> {
             PhoneEntity phone = phoneService.getPhoneById(orderItemEntity.getPhone().getId());
             if(orderItemEntity.getQuantity() > phone.getQuantity()) throw new ApiException("Not enough quantity for the phone with id " + phone.getId(), HttpStatus.BAD_GATEWAY);
             // reduce the quantity of the phone
@@ -69,20 +70,26 @@ public class OrderService {
             PhoneEntity updatedPhone = phoneService.updatePhone(phone.getId(), phone);
             orderItemEntity.setOrder(orderEntity);
             orderItemEntity.setPhone(updatedPhone);
-        });
+            return orderItemEntity;
+        }).toList();
+
+        orderEntity.setOrderItems(orderItemEntityList);
         orderEntity.setStatus(OrderStatus.PENDING);
         OrderEntity orderSaved = orderRepository.save(orderEntity);
-        log.info(EXITING_METHOD, orderSaved);
+        log.info(EXITING_METHOD, METHOD_NAME);
         return orderSaved;
     }
 
+    // NOTE: Update in order is done using order items
     @Transactional
     public OrderEntity updateOrder(Long id, OrderEntity entity) {
         final String METHOD_NAME = "updateOrder";
         log.info(ENTERING_METHOD, METHOD_NAME);
         OrderEntity order = orderRepository.findById(id)
                 .orElseThrow(() -> new ApiException("Order with id " + id + " was not found", HttpStatus.NOT_FOUND));
-        mapper.map(entity, order);
+        order.setOrderItems(entity.getOrderItems());
+        order.setUser(entity.getUser());
+        order.setStatus(entity.getStatus());
         OrderEntity orderEntityUpdated = orderRepository.save(order);
         log.info(EXITING_METHOD, orderEntityUpdated);
         return orderEntityUpdated;

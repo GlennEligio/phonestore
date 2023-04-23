@@ -1,5 +1,8 @@
 package com.glenneligio.phonestore.service;
 
+import com.glenneligio.phonestore.dtos.OrderDto;
+import com.glenneligio.phonestore.dtos.OrderItemDto;
+import com.glenneligio.phonestore.dtos.PhoneDto;
 import com.glenneligio.phonestore.entity.OrderEntity;
 import com.glenneligio.phonestore.entity.OrderItemEntity;
 import com.glenneligio.phonestore.entity.PhoneEntity;
@@ -23,14 +26,12 @@ public class OrderItemService {
     private OrderItemRepository orderItemRepository;
     private OrderService orderService;
     private PhoneService phoneService;
-    private ModelMapper mapper;
 
     @Autowired
-    public OrderItemService(OrderItemRepository orderItemRepository, OrderService orderService, PhoneService phoneService, ModelMapper mapper) {
+    public OrderItemService(OrderItemRepository orderItemRepository, OrderService orderService, PhoneService phoneService) {
         this.orderItemRepository = orderItemRepository;
         this.orderService = orderService;
         this.phoneService = phoneService;
-        this.mapper = mapper;
     }
 
     public List<OrderItemEntity> getAllOrderItems() {
@@ -74,32 +75,42 @@ public class OrderItemService {
         final String METHOD_NAME = "updateOrderItem";
         log.info(ENTERING_METHOD, METHOD_NAME);
 
-        OrderItemEntity orderItemEntity1 = orderItemRepository.findById(id)
+        OrderItemEntity orderItemEntityInDb = orderItemRepository.findById(id)
                 .orElseThrow(() -> new ApiException("Order item with specified id does not exist", HttpStatus.NOT_FOUND));
         PhoneEntity newPhone = phoneService.getPhoneById(orderItemEntity.getPhone().getId());
-        PhoneEntity oldPhone = phoneService.getPhoneById(orderItemEntity1.getPhone().getId());
+        PhoneEntity oldPhone = phoneService.getPhoneById(orderItemEntityInDb.getPhone().getId());
 
         // If the Phone is still the same
-        if(orderItemEntity.getPhone().getId().equals(orderItemEntity1.getPhone().getId())) {
-            Long quantityChange = orderItemEntity.getQuantity() - orderItemEntity1.getQuantity();
+        if(orderItemEntity.getPhone().getId().equals(orderItemEntityInDb.getPhone().getId())) {
+            Long quantityChange = orderItemEntity.getQuantity() - orderItemEntityInDb.getQuantity();
+
             if(quantityChange > oldPhone.getQuantity()) throw new ApiException("Phone with id " + oldPhone.getId() + " does not have enough stock", HttpStatus.BAD_REQUEST);
             oldPhone.setQuantity(oldPhone.getQuantity() - quantityChange);
+            phoneService.updatePhone(oldPhone.getId(), oldPhone);
             orderItemEntity.setPhone(oldPhone);
+
         } else {
             // If Phone is not the same anymore, add the quantity back to old phone
-            Long quantityReverted = orderItemEntity1.getQuantity();
+            Long quantityReverted = orderItemEntityInDb.getQuantity();
             oldPhone.setQuantity(oldPhone.getQuantity() + quantityReverted);
 
             // Check if there is enough stock
             if(orderItemEntity.getQuantity() > newPhone.getQuantity()) throw new ApiException("Phone with id " + newPhone.getId() + " does not have enough stock", HttpStatus.BAD_REQUEST);
             newPhone.setQuantity(newPhone.getQuantity() - orderItemEntity.getQuantity());
+
+            phoneService.updatePhone(oldPhone.getId(), oldPhone);
+            phoneService.updatePhone(newPhone.getId(), newPhone);
             orderItemEntity.setPhone(newPhone);
         }
 
-        mapper.map(orderItemEntity, orderItemEntity1);
+        // update orderItemEntity1 info
+        orderItemEntityInDb.setQuantity(orderItemEntity.getQuantity());
+        orderItemEntityInDb.setPhone(orderItemEntity.getPhone());
+
+        // update orderItemEntity1 order
         OrderEntity orderEntity = orderService.getOrderById(orderItemEntity.getOrder().getId());
-        orderItemEntity.setOrder(orderEntity);
-        OrderItemEntity orderItemEntitySaved = orderItemRepository.save(orderItemEntity);
+        orderItemEntityInDb.setOrder(orderEntity);
+        OrderItemEntity orderItemEntitySaved = orderItemRepository.save(orderItemEntityInDb);
         log.info(EXITING_METHOD, METHOD_NAME);
         return orderItemEntitySaved;
     }

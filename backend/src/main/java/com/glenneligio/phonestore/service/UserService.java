@@ -27,13 +27,11 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final ModelMapper mapper;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper mapper) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.mapper = mapper;
     }
 
     public List<UserEntity> getAllUsers() {
@@ -78,9 +76,13 @@ public class UserService implements UserDetailsService {
         final String METHOD_NAME = "updateUser";
         log.info(ENTERING_METHOD, METHOD_NAME);
         UserEntity userEntity1 = getUserByUsername(username);
-        mapper.map(userEntity, userEntity1);
+        userEntity1.setUserType(userEntity.getUserType());
+        userEntity1.setEmail(userEntity.getEmail());
+        userEntity1.setIsActive(userEntity.getIsActive());
+        userEntity1.setFullName(userEntity.getFullName());
         userEntity1.setUsername(username);
         userEntity1.setPassword(passwordEncoder.encode(userEntity1.getPassword()));
+        log.info(userEntity1.toString());
         UserEntity userUpdated = userRepository.save(userEntity1);
         log.info(EXITING_METHOD, METHOD_NAME);
         return userUpdated;
@@ -89,7 +91,8 @@ public class UserService implements UserDetailsService {
     public void deleteUser(String username) {
         final String METHOD_NAME = "deleteUser";
         log.info(ENTERING_METHOD, METHOD_NAME);
-        UserEntity userEntity = getUserByUsername(username);
+        UserEntity userEntity = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ApiException("No user with username " + username + " exist", HttpStatus.NOT_FOUND));
         userRepository.delete(userEntity);
         log.info(EXITING_METHOD, METHOD_NAME);
     }
@@ -98,8 +101,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         final String METHOD_NAME = "laodUserByUsername";
         log.info(ENTERING_METHOD, METHOD_NAME);
-        UserEntity userEntity = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("No user with username "+username + " was found"));
+        UserEntity userEntity = getUserByUsername(username);
         XUserDetails userDetails = new XUserDetails(userEntity);
         log.info(EXITING_METHOD, METHOD_NAME);
         return userDetails;
