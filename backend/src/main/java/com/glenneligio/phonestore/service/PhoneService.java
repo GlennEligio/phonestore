@@ -20,13 +20,11 @@ public class PhoneService {
 
     private PhoneRepository phoneRepository;
     private BrandService brandService;
-    private ModelMapper mapper;
 
     @Autowired
-    public PhoneService(PhoneRepository phoneRepository, BrandService brandService, ModelMapper mapper) {
+    public PhoneService(PhoneRepository phoneRepository, BrandService brandService) {
         this.phoneRepository = phoneRepository;
         this.brandService = brandService;
-        this.mapper = mapper;
     }
 
     public List<PhoneEntity> getAllPhones() {
@@ -45,7 +43,7 @@ public class PhoneService {
         return phone;
     }
 
-    public List<PhoneEntity> getPhoneByBrandName(String name) {
+    public List<PhoneEntity> getPhonesByBrandName(String name) {
         final String METHOD_NAME = "getPhoneByBrandName";
         log.info(ENTERING_METHOD, METHOD_NAME);
         List<PhoneEntity> phoneEntityList = phoneRepository.findByBrandName(name);
@@ -68,10 +66,15 @@ public class PhoneService {
         log.info(ENTERING_METHOD, METHOD_NAME);
         PhoneEntity phoneEntity1 = phoneRepository.findById(id).orElseThrow(() -> new ApiException("Phone with specified id does not exists", HttpStatus.NOT_FOUND));
         BrandEntity brandEntity = brandService.getBrandByName(phoneEntity.getBrand().getName());
-        phoneEntity.setBrand(brandEntity);
-        mapper.map(phoneEntity, phoneEntity1);
+        phoneEntity1.setQuantity(phoneEntity.getQuantity());
+        phoneEntity1.setBrand(brandEntity);
+        phoneEntity1.setDiscount(phoneEntity.getDiscount());
+        phoneEntity1.setDescription(phoneEntity.getDescription());
+        phoneEntity1.setPrice(phoneEntity.getPrice());
+        phoneEntity1.setSpecification(phoneEntity.getSpecification());
         PhoneEntity phoneUpdated = phoneRepository.save(phoneEntity1);
         log.info(EXITING_METHOD, METHOD_NAME);
+        log.info("Updated phone {}", phoneUpdated);
         return phoneUpdated;
     }
 

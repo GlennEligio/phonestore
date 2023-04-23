@@ -34,7 +34,7 @@ public class PhoneController {
         List<PhoneDto> phoneDtos = null;
         if(brandName != null && !brandName.isBlank()) {
             log.debug("Fetching all phones with brand name {}", brandName);
-            phoneDtos = service.getPhoneByBrandName(brandName).stream().map(PhoneDto::convertToDto).toList();
+            phoneDtos = service.getPhonesByBrandName(brandName).stream().map(PhoneDto::convertToDto).toList();
         } else {
             log.debug("Fetching all phones");
             phoneDtos = service.getAllPhones().stream().map(PhoneDto::convertToDto).toList();

@@ -50,10 +50,12 @@ public class SecurityConfiguration {
                 // FOR GETTING BRAND AND PRODUCT INFO
                 .requestMatchers(HttpMethod.GET, "/api/*/brands").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/*/phones").permitAll()
+                // FOR OPEN API DOCS AND SWAGGER UI
+                .requestMatchers(HttpMethod.GET, "/swagger-ui.html", "/v3/api-docs").permitAll()
                 // LOGIN AND REGISTER
                 .requestMatchers(HttpMethod.POST, "/api/*/users/login", "/api/*/users/register").permitAll()
-                .anyRequest().hasAnyAuthority(UserType.ADMIN.getType());
-//                .anyRequest().permitAll();
+//                .anyRequest().hasAnyAuthority(UserType.ADMIN.getType());
+                .anyRequest().permitAll();
         return http.build();
     }
 
